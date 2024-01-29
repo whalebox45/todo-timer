@@ -19,14 +19,6 @@ export default {
 
     const timerDataArray = reactive([]);
 
-    // const showModal = reactive({
-    //   value: false,
-    //   open: () => {
-    //     alert("fuck")
-    //     showModal.value = true
-    //   },
-    //   close: () =>{ showModal.value = false },
-    // })
 
     if (localStorage.getItem("TimerDataArrayStorage") == null) {
       timerDataArray.push(new Timer('Task 1', 0, true));
@@ -45,11 +37,6 @@ export default {
     return { timerDataArray };
   },
   mounted(){
-    (() => {
-      let testModal = document.getElementById('testModal');
-      let modal = Modal.getOrCreateInstance(testModal);
-      modal.show();
-    })();
   },
   components: {
     TaskCard, TestModal
@@ -120,9 +107,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-
-
-  // box-shadow: 2px 2px 4px inset;
 
   #plusicon {
     font-size: 48px;
