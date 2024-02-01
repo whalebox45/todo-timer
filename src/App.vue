@@ -1,51 +1,63 @@
 <script>
 import { reactive, onMounted } from 'vue';
-import {Modal} from 'bootstrap';
+import { Modal } from 'bootstrap';
 import TaskCard from './components/TaskCard.vue';
-import TestModal from './components/TestModal.vue';
+import AddTaskModal from './components/AddTaskModal.vue';
+import SettingModal from './components/SettingModal.vue';
 
+class Timer {
+  constructor(name, refreshTime, isPeriodical) {
+    this.name = name;
+    this.refreshTime = refreshTime;
+    this.isPeriodical = isPeriodical;
+    this.isChecked = false;
+    this.id = crypto.randomUUID();
+  }
+  static createTask(name, refreshTime, isPeriodical) {
+    return new Timer(name, refreshTime, isPeriodical);
+  }
+}
 
 export default {
   setup() {
-    class Timer {
-      constructor(name, refreshTime, isPeriodical) {
-        this.name = name;
-        this.refreshTime = refreshTime;
-        this.isPeriodical = isPeriodical;
-        this.isChecked = false;
-        this.id = crypto.randomUUID();
-      }
-    }
-
     const timerDataArray = reactive([]);
 
+    // Load data from localStorage if it exists
+    const storedData = localStorage.getItem('TimerDataArrayStorage');
+    if (storedData !== null) {
+      // Parse the stored data and push it to the timerDataArray
+      const storedTasks = JSON.parse(storedData);
+      storedTasks.forEach(task => {
+        timerDataArray.push(new Timer(task.name, task.refreshTime, task.isPeriodical));
+      });
+    } else {
+      // If localStorage is empty, add default tasks
+      timerDataArray.push(Timer.createTask('Task 1', 0, false));
+      timerDataArray.push(Timer.createTask('Task 2', 43200, true));
 
-    if (localStorage.getItem("TimerDataArrayStorage") == null) {
-      timerDataArray.push(new Timer('Task 1', 0, true));
-      localStorage.setItem("TimerDataArrayStorage", JSON.stringify(timerDataArray))
+      // Save the default tasks to localStorage
+      localStorage.setItem('TimerDataArrayStorage', JSON.stringify(timerDataArray));
     }
 
-    timerDataArray.push(new Timer('Task 2', 43200, true));
-    timerDataArray.push(new Timer('Task 3', 6000, true));
-    timerDataArray.push(new Timer('Task 4', 36000, true));
-    timerDataArray.push(new Timer('Task 5', 72000, true));
-    timerDataArray.push(new Timer('Task 6', 66660, true));
-    timerDataArray.push(new Timer('Task 7', 85000, true));
+    console.log(timerDataArray)
 
-    localStorage.setItem("TimerDataArrayStorage", JSON.stringify(timerDataArray));
-
-    return { timerDataArray };
+    return { timerDataArray, Timer };
   },
-  mounted(){
+  mounted() {
   },
   components: {
-    TaskCard, TestModal
+    TaskCard, AddTaskModal, SettingModal
   },
-  methods:{
-    openModal(){
-      let testModal = document.getElementById('testModal');
-      let modal = Modal.getOrCreateInstance(testModal);
+  methods: {
+    openModal() {
+      const AddTaskModal = document.getElementById('AddTaskModal');
+      const modal = Modal.getOrCreateInstance(AddTaskModal);
       modal.show()
+    },
+    openSettingModal() {
+      const settingModal = document.getElementById('settingModal');
+      const modal = Modal.getOrCreateInstance(settingModal);
+      modal.show();
     }
   }
 }
@@ -57,10 +69,10 @@ export default {
     <div style="height:4.5rem"></div>
     <div class="mx-3 maincontrol">
       <div class="control-left">
-        <a class="bi bi-sort-down" id="sortbtn" v-on:click="openModal"></a>
+        <a class="bi bi-sort-down" id="sortbtn"></a>
       </div>
       <div class="control-right">
-        <a class="bi bi-gear-fill"></a>
+        <a class="bi bi-gear-fill" @click="openSettingModal"></a>
 
       </div>
     </div>
@@ -68,16 +80,16 @@ export default {
     <div class="row gy-1 gx-1 mx-3">
       <!-- <TaskCard v-for="_ in Array(10)"  /> -->
       <TaskCard v-for="t in timerDataArray" v-bind:id="t.id" :taskname="t.name" :isChecked="t.isChecked"
-        :refreshTime="t.refreshTime" />
+        :refreshTime="t.refreshTime" :isPeriodical="t.isPeriodical" />
     </div>
     <div style="height:96px"></div>
-    <!-- <TestModal id="testm" /> -->
   </div>
   <div class="floatbutton" @click="openModal">
     <a class="bi bi-plus" id="plusicon"></a>
   </div>
 
-  <TestModal />
+  <AddTaskModal />
+  <SettingModal />
 </template>
 
 <style scoped lang="scss">

@@ -1,0 +1,41 @@
+<template>
+    <div class="modal fade" id="settingModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">設定</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @click="closeModal"></button>
+                </div>
+
+                <div class="modal-body row">
+                        <h5 class="col-10">重設程式</h5>
+                        <button type="button" id="resetBtn" class="btn btn-danger col-2" @click="resetTimer">重設</button>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @click="closeModal">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import {Modal} from 'bootstrap';
+export default {
+    methods: {
+        closeModal() {
+            let settingModal = document.getElementById('settingModal');
+            let modal = Modal.getOrCreateInstance(settingModal);
+            modal.hide()
+        },
+        resetTimer() {
+            // Clean up timerDataArray, remove localStorage
+            this.$root.timerDataArray.splice(0);
+            localStorage.removeItem('TimerDataArrayStorage');
+            
+            location.reload();
+        }
+    }
+}
+</script>

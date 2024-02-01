@@ -11,7 +11,8 @@
 
             <div class="tasktexts">
                 <h1>{{ taskname }}</h1>
-                <h2>{{ formattedTime }}</h2>
+                <h2 v-if="isPeriodical">{{ formattedTime }}</h2>
+                <!-- <h2 v-else>else</h2> -->
             </div>
             <div class="taskcontrol">
                 <a class="bi bi-pencil-square" aria-label="Edit Task"></a>
@@ -27,6 +28,7 @@ export default {
         taskname: String,
         isChecked: Boolean,
         refreshTime: Number,
+        isPeriodical: Boolean
     },
     data() {
         return {
