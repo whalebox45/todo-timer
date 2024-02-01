@@ -1,9 +1,11 @@
 <script>
 import { reactive, onMounted } from 'vue';
 import { Modal } from 'bootstrap';
+
 import TaskCard from './components/TaskCard.vue';
 import AddTaskModal from './components/AddTaskModal.vue';
 import SettingModal from './components/SettingModal.vue';
+import EditTaskModal from './components/EditTaskModal.vue';
 
 class Timer {
   constructor(name, refreshTime, isPeriodical) {
@@ -61,8 +63,12 @@ export default {
     }
   }
 }
-
 </script>
+
+
+
+
+
 
 <template>
   <div>
@@ -78,9 +84,7 @@ export default {
     </div>
 
     <div class="row gy-1 gx-1 mx-3">
-      <!-- <TaskCard v-for="_ in Array(10)"  /> -->
-      <TaskCard v-for="t in timerDataArray" v-bind:id="t.id" :taskname="t.name" :isChecked="t.isChecked"
-        :refreshTime="t.refreshTime" :isPeriodical="t.isPeriodical" />
+      <TaskCard v-for="t in timerDataArray" v-bind:id="t.id" :taskname="t.name" :isChecked="t.isChecked" :refreshTime="t.refreshTime" :isPeriodical="t.isPeriodical" />
     </div>
     <div style="height:96px"></div>
   </div>
@@ -91,6 +95,11 @@ export default {
   <AddTaskModal />
   <SettingModal />
 </template>
+
+
+
+
+
 
 <style scoped lang="scss">
 .maincontrol {
