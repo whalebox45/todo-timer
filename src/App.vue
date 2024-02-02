@@ -48,7 +48,12 @@ export default {
   mounted() {
   },
   components: {
-    TaskCard, AddTaskModal, SettingModal
+    TaskCard, AddTaskModal, EditTaskModal, SettingModal
+  },
+  data() {
+    return {
+      showEditModal: false,
+    };
   },
   methods: {
     openModal() {
@@ -60,7 +65,18 @@ export default {
       const settingModal = document.getElementById('settingModal');
       const modal = Modal.getOrCreateInstance(settingModal);
       modal.show();
-    }
+    },
+    openEditModal(taskData) {
+      // Set the data for the EditTaskModal
+      this.editTaskData = taskData;
+
+      // Show the EditTaskModal
+      this.showEditModal = true;
+    },
+    resetEditModal() {
+      // Reset the showEditModal variable to false when the modal is hidden
+      this.showEditModal = false;
+    },
   }
 }
 </script>
@@ -84,15 +100,23 @@ export default {
     </div>
 
     <div class="row gy-1 gx-1 mx-3">
-      <TaskCard v-for="t in timerDataArray" v-bind:id="t.id" :taskname="t.name" :isChecked="t.isChecked" :refreshTime="t.refreshTime" :isPeriodical="t.isPeriodical" />
+      <TaskCard v-for="t in timerDataArray" 
+        v-bind:key="t.id"
+        :id="t.id"
+        :taskname="t.name" 
+        :isChecked="t.isChecked" 
+        :refreshTime="t.refreshTime" 
+        :isPeriodical="t.isPeriodical"
+        @edit-task="openEditModal" />
     </div>
-    <div style="height:96px"></div>
+    <div style="height:9rem"></div>
   </div>
   <div class="floatbutton" @click="openModal">
     <a class="bi bi-plus" id="plusicon"></a>
   </div>
 
   <AddTaskModal />
+  <EditTaskModal :show="showEditModal" @modal-hidden="resetEditModal" />
   <SettingModal />
 </template>
 
@@ -108,6 +132,9 @@ export default {
 
   * {
     font-size: 36px;
+  }
+  a {
+    color: #171717;
   }
 }
 

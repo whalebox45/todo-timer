@@ -7,9 +7,11 @@
                     <button type="button" class="btn-close" aria-label="Close" @click="closeModal"></button>
                 </div>
 
-                <div class="modal-body row">
+                <div class="modal-body">
+                    <div class="form-group">
                         <h5 class="col-10">重設程式</h5>
                         <button type="button" id="resetBtn" class="btn btn-danger col-2" @click="resetTimer">重設</button>
+                    </div>
                 </div>
 
                 <div class="modal-footer">
