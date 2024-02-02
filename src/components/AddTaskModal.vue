@@ -1,5 +1,5 @@
 <template>
-	<div class="modal fade AddTaskModal" id="AddTaskModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal fade" id="AddTaskModal" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -101,7 +101,6 @@ export default {
 			
 			if (isPM === 1) timeInSeconds += 12 * 3600;
 
-			// For testing purpose
 			const isPeriodical = parseInt(this.isPeriodical);
 
 			
