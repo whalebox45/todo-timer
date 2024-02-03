@@ -89,7 +89,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" @click="saveClick">OK</button>
-					<button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
+					<button type="button" class="btn btn-secondary" @click="closeModal">關閉</button>
 				</div>
 			</div>
 		</div>
@@ -181,7 +181,7 @@ export default {
 			this.closeModal();
 		},
 		deleteClick() {
-			if (confirm("Are you sure you want to delete this task?")) {
+			if (confirm("您確定要刪除事項?")) {
 				this.$root.deleteTimerById(this.editTaskData.id);
 
 				localStorage.setItem('TimerDataArrayStorage', JSON.stringify(this.$root.timerDataArray));

@@ -86,7 +86,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" @click="addClick">OK</button>
-					<button type="button" class="btn btn-se" @click="closeModal">Close</button>
+					<button type="button" class="btn btn-se" @click="closeModal">關閉</button>
 				</div>
 			</div>
 		</div>
