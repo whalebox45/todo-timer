@@ -101,24 +101,10 @@ export default {
 			
 			if (isPM === 1) timeInSeconds += 12 * 3600;
 
-			const isPeriodical = parseInt(this.isPeriodical);
-
-			
-			console.log(
-				JSON.stringify(
-					{
-						"taskTitle": this.taskTitle,
-						"isPeriodical": this.isPeriodical,
-						"timeInSeconds": timeInSeconds
-					}
-				)
-			)
-			
-
-			
+			const isPeriodical = parseInt(this.isPeriodical);			
 
 			// Create a new instance of the Timer class using the static method
-			const newTimer = App.setup().Timer.createTask(this.taskTitle, isPeriodical === 1 ? timeInSeconds : 0, isPeriodical === 1);
+			const newTimer = App.setup().Timer.createTask(this.taskTitle, isPeriodical === 1 ? timeInSeconds : 0, isPeriodical === 1, false);
 
 			// Access the timerDataArray from the root Vue instance
 			this.$root.timerDataArray.push(newTimer);

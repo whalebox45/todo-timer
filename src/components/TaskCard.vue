@@ -2,30 +2,29 @@
     <div class="col-lg-6">
         <div class="card bg-transparent taskcard rounded-3">
             <div class="taskcheck">
-                <input type="checkbox" />
+                <input type="checkbox" v-modal="localIsChecked" @change="handleCheckboxChange"/>
                 <div>
-                    <p class="bi bi-square"></p>
-                    <p class="bi bi-check-square-fill"></p>
+                    <p class="bi bi-check-square-fill" v-if="this.isChecked"></p>
+                    <p class="bi bi-square" v-else></p>
                 </div>
             </div>
 
             <div class="tasktexts">
-                <h1>{{ taskname }}</h1>
+                <h1>{{ taskTitle }}</h1>
                 <h2 v-if="isPeriodical">{{ formattedTime }}</h2>
-                <!-- <h2 v-else>else</h2> -->
             </div>
             <div class="taskcontrol">
-                <a class="bi bi-pencil-square" aria-label="Edit Task"></a>
+                <a class="bi bi-pencil-square" aria-label="Edit Task" @click="editTask"></a>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-var a = 1;
 export default {
     props: {
-        taskname: String,
+        id: String,
+        taskTitle: String,
         isChecked: Boolean,
         refreshTime: Number,
         isPeriodical: Boolean
@@ -34,6 +33,7 @@ export default {
         return {
             elapsedTime: 0,
             timerInterval: null,
+            localIsChecked: this.isChecked,
         }
     },
     computed: {
@@ -53,11 +53,25 @@ export default {
                 const dt = new Date();
                 const secs = dt.getSeconds() + (60 * dt.getMinutes()) + (60 * 60 * dt.getHours());
                 const diff = this.refreshTime - secs
-                this.elapsedTime = ( diff < 0 ) ? diff+86400: diff;
-            }, 1000); 
+                this.elapsedTime = (diff < 0) ? diff + 86400 : diff;
+            }, 1000);
         },
         stopTimer() {
             clearInterval(this.timerInterval);
+        },
+        editTask() {
+            // console.log('edit-task')
+            this.$emit('edit-task', {
+                id: this.id,
+                taskTitle: this.taskTitle,
+                refreshTime: this.refreshTime,
+                isPeriodical: this.isPeriodical
+            });
+        },
+        handleCheckboxChange() {
+            this.localIsChecked = !this.localIsChecked;
+            // alert(`Checkbox is now ${this.localIsChecked ? 'checked' : 'unchecked'}`);
+            this.$emit('checkbox-change', { id: this.id, isChecked: this.localIsChecked });
         },
     },
     watch: {
@@ -69,6 +83,7 @@ export default {
     },
     created() {
         this.startTimer();
+        console.log(this)
     },
     beforeDestroy() {
         this.stopTimer();
@@ -99,18 +114,19 @@ export default {
         z-index: 2;
         opacity: 0%;
 
-        +div .bi-check-square-fill {
-            display: none;
-        }
+        // +div .bi-check-square-fill {
+        //     display: none;
+        // }
     }
-    input[type=checkbox]:checked {
-        +div .bi-square {
-            display: none;
-        }
 
-        +div .bi-check-square-fill {
-            display: unset;
-        }
+    input[type=checkbox]:checked {
+        // +div .bi-square {
+        //     display: none;
+        // }
+
+        // +div .bi-check-square-fill {
+        //     display: unset;
+        // }
     }
 
     p {
@@ -148,6 +164,7 @@ export default {
     a {
         font-size: 36px;
         text-align: right;
+        color: #171717;
     }
 }
 </style>

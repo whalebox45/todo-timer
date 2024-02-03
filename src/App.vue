@@ -8,42 +8,48 @@ import SettingModal from './components/SettingModal.vue';
 import EditTaskModal from './components/EditTaskModal.vue';
 
 class Timer {
-  constructor(name, refreshTime, isPeriodical) {
-    this.name = name;
+  constructor(taskTitle, refreshTime, isPeriodical, isChecked) {
+    this.taskTitle = taskTitle;
     this.refreshTime = refreshTime;
     this.isPeriodical = isPeriodical;
-    this.isChecked = false;
+    this.isChecked = isChecked;
     this.id = crypto.randomUUID();
   }
-  static createTask(name, refreshTime, isPeriodical) {
-    return new Timer(name, refreshTime, isPeriodical);
+  static createTask(taskTitle, refreshTime, isPeriodical, isChecked) {
+    return new Timer(taskTitle, refreshTime, isPeriodical, false);
   }
 }
 
 export default {
   setup() {
+
+
     const timerDataArray = reactive([]);
+    const editTaskData = reactive({});
 
     // Load data from localStorage if it exists
     const storedData = localStorage.getItem('TimerDataArrayStorage');
+
+    
+
     if (storedData !== null) {
       // Parse the stored data and push it to the timerDataArray
       const storedTasks = JSON.parse(storedData);
       storedTasks.forEach(task => {
-        timerDataArray.push(new Timer(task.name, task.refreshTime, task.isPeriodical));
+        // console.log(task)
+        timerDataArray.push(new Timer(task.taskTitle, task.refreshTime, task.isPeriodical, task.isChecked));
       });
     } else {
       // If localStorage is empty, add default tasks
-      timerDataArray.push(Timer.createTask('Task 1', 0, false));
-      timerDataArray.push(Timer.createTask('Task 2', 43200, true));
+      timerDataArray.push(Timer.createTask('Task 1', 0, false, true));
+      timerDataArray.push(Timer.createTask('Task 2', 43200, true, false));
 
       // Save the default tasks to localStorage
       localStorage.setItem('TimerDataArrayStorage', JSON.stringify(timerDataArray));
     }
 
-    console.log(timerDataArray)
-
-    return { timerDataArray, Timer };
+    // debugger;
+    return { timerDataArray, Timer, editTaskData };
   },
   mounted() {
   },
@@ -66,17 +72,32 @@ export default {
       const modal = Modal.getOrCreateInstance(settingModal);
       modal.show();
     },
+    handleCheckboxChange({ id, isChecked }) {
+      console.log(1);
+      const index = this.timerDataArray.findIndex((timer) => timer.id === id);
+      if (index !== -1) {
+        // this.$set(this.timerDataArray, index, { ...this.timerDataArray[index], isChecked });
+        this.timerDataArray[index].isChecked = isChecked;
+        localStorage.setItem('TimerDataArrayStorage', JSON.stringify(this.timerDataArray));
+      }
+    },
     openEditModal(taskData) {
-      // Set the data for the EditTaskModal
       this.editTaskData = taskData;
-
-      // Show the EditTaskModal
       this.showEditModal = true;
     },
-    resetEditModal() {
-      // Reset the showEditModal variable to false when the modal is hidden
-      this.showEditModal = false;
+    resetEditModal() { this.showEditModal = false; },
+    updateTimerById(id, newData) {
+      const index = this.timerDataArray.findIndex(timer => timer.id === id);
+      if (index !== -1) {
+        this.timerDataArray[index] = { ...this.timerDataArray[index], ...newData };
+      }
     },
+    deleteTimerById(id) {
+      console.log(id);
+      const index = this.timerDataArray.findIndex(timer => timer.id === id);
+      if (index !== -1) this.timerDataArray.splice(index, 1);
+    },
+
   }
 }
 </script>
@@ -100,15 +121,12 @@ export default {
     </div>
 
     <div class="row gy-1 gx-1 mx-3">
-      <TaskCard v-for="t in timerDataArray" 
-        v-bind:key="t.id"
-        :id="t.id"
-        :taskname="t.name" 
-        :isChecked="t.isChecked" 
-        :refreshTime="t.refreshTime" 
-        :isPeriodical="t.isPeriodical"
-        @edit-task="openEditModal" />
+      <TaskCard v-for="t in timerDataArray" v-bind:key="t.id" :id="t.id" :taskTitle="t.taskTitle" :isChecked="t.isChecked"
+        :refreshTime="t.refreshTime" :isPeriodical="t.isPeriodical" @edit-task="openEditModal"
+        @checkbox-change="handleCheckboxChange" />
     </div>
+
+
     <div style="height:9rem"></div>
   </div>
   <div class="floatbutton" @click="openModal">
@@ -116,7 +134,7 @@ export default {
   </div>
 
   <AddTaskModal />
-  <EditTaskModal :show="showEditModal" @modal-hidden="resetEditModal" />
+  <EditTaskModal :show="showEditModal" @modal-hidden="resetEditModal" :editTaskData="editTaskData" />
   <SettingModal />
 </template>
 
@@ -133,6 +151,7 @@ export default {
   * {
     font-size: 36px;
   }
+
   a {
     color: #171717;
   }
