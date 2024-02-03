@@ -8,61 +8,82 @@
 				</div>
 				<div class="modal-body">
 					<form>
-						<div class="form-group">
-							<h5 :title="id">標題</h5>
-							<input type="text" class="form-control" maxlength="100" v-model="taskTitle" />
+						<div class="form-group container-fluid row">
+							<h5 :title="id" class="col-3">標題</h5>
+							<span class="col-9">
+								<input type="text" class="form-control" maxlength="100" v-model="taskTitle" />
+							</span>
 						</div>
 
-						<div class="form-group">
-							<h5>週期性</h5>
-							<input class="form-check-input" type="radio" id="periodRadio1" name="periodRadio"
-								v-model="isPeriodical" value="0">
-							<label class="form-check-label" for="periodRadio1">否</label>
-							<input class="form-check-input" type="radio" id="periodRadio2" name="periodRadio"
-								v-model="isPeriodical" value="1">
-							<label class="form-check-label" for="periodRadio2">是</label>
+						<div class="form-group container-fluid row">
+							<h5 class="col-3">週期性</h5>
+							<span class="col-3">
+								<input class="form-check-input" type="radio" id="periodRadio1" name="periodRadio"
+									v-model="isPeriodical" value="0">
+								<label class="form-check-label" for="periodRadio1">否</label>
+							</span>
+							<span class="col-3">
+								<input class="form-check-input" type="radio" id="periodRadio2" name="periodRadio"
+									v-model="isPeriodical" value="1">
+								<label class="form-check-label" for="periodRadio2">是</label>
+							</span>
 						</div>
 
-						<div class="form-group" v-if="isPeriodical == 1">
-							<h5>重置時間</h5>
-							<input class="form-check-input" type="radio" id="isPMRadio1" name="isPMRadio" v-model="isPM"
-								value="1">
-							<label class="form-check-label" for="isPMRadio1">下午</label>
+						<div class="form-group container-fluid" v-if="isPeriodical == 1">
+							<div class="row">
+								<h5 class="col-3">重置時間</h5>
+								<span class="col-4">
 
-							<input class="form-check-input" type="radio" id="isPMRadio2" name="isPMRadio" v-model="isPM"
-								value="0">
-							<label class="form-check-label" for="isPMRadio2">上午</label>
+									<input class="form-check-input" type="radio" id="isPMRadio1" name="isPMRadio"
+										v-model="isPM" value="1">
+									<label class="form-check-label" for="isPMRadio1">下午</label>
 
+									<input class="form-check-input" type="radio" id="isPMRadio2" name="isPMRadio"
+										v-model="isPM" value="0">
+									<label class="form-check-label" for="isPMRadio2">上午</label>
+								</span>
 
-							<select class="form-control" v-model="selectedHour">
-								<option selected value="0">12</option>
-								<option>1</option>
-								<option>2</option>
-								<option>3</option>
-								<option>4</option>
-								<option>5</option>
-								<option>6</option>
-								<option>7</option>
-								<option>8</option>
-								<option>9</option>
-								<option>10</option>
-								<option>11</option>
-							</select>
-							<label>:</label>
-							<select class="form-control" v-model="selectedMinute">
-								<option selected value="0">00</option>
-								<option>10</option>
-								<option>20</option>
-								<option>30</option>
-								<option>40</option>
-								<option>50</option>
-							</select>
+							</div>
+
+							<div class="row">
+								<div class="col-3">
+
+									<select class="form-control " v-model="selectedHour">
+										<option selected value="0">12</option>
+										<option>1</option>
+										<option>2</option>
+										<option>3</option>
+										<option>4</option>
+										<option>5</option>
+										<option>6</option>
+										<option>7</option>
+										<option>8</option>
+										<option>9</option>
+										<option>10</option>
+										<option>11</option>
+									</select>
+								</div>
+								<span class="col-1">:</span>
+								<div class="col-3">
+
+									<select class="form-control " v-model="selectedMinute">
+										<option selected value="0">00</option>
+										<option>10</option>
+										<option>20</option>
+										<option>30</option>
+										<option>40</option>
+										<option>50</option>
+									</select>
+								</div>
+
+							</div>
 						</div>
 					</form>
 
-					<div class="form-group">
-						<h5>刪除</h5>
-						<button type="button" class="btn btn-danger" @click="deleteClick">刪除</button>
+					<div class="form-group container-fluid row">
+						<h5 class="col-3">刪除</h5>
+						<div class="col-7"></div>
+						<button type="button" class="col-2 btn btn-danger" @click="deleteClick">刪除</button>
 					</div>
 					<!-- <p>Modal Body</p> -->
 				</div>
@@ -160,12 +181,12 @@ export default {
 			this.closeModal();
 		},
 		deleteClick() {
-			if(confirm("Are you sure you want to delete this task?")){
+			if (confirm("Are you sure you want to delete this task?")) {
 				this.$root.deleteTimerById(this.editTaskData.id);
 
 				localStorage.setItem('TimerDataArrayStorage', JSON.stringify(this.$root.timerDataArray));
 
-				this.closeModal();	
+				this.closeModal();
 			}
 		}
 	}

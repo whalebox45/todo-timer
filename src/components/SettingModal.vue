@@ -8,9 +8,9 @@
                 </div>
 
                 <div class="modal-body">
-                    <div class="form-group">
+                    <div class="form-group container-fluid row">
                         <h5 class="col-10">重設程式</h5>
-                        <button type="button" id="resetBtn" class="btn btn-danger col-2" @click="resetTimer">重設</button>
+                        <button type="button" id="resetBtn" class="col-2 btn btn-danger" @click="resetTimer">重設</button>
                     </div>
                 </div>
 
