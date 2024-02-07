@@ -1,15 +1,15 @@
 <template>
     <div class="col-lg-6">
-        <div class="card bg-transparent taskcard rounded-3">
+        <div class="card taskcard rounded-3">
             <div class="taskcheck">
-                <input type="checkbox" v-modal="localIsChecked" @change="handleCheckboxChange"/>
+                <input type="checkbox" @change="handleCheckboxChange"/>
                 <div>
                     <p class="bi bi-check-square-fill" v-if="this.isChecked"></p>
                     <p class="bi bi-square" v-else></p>
                 </div>
             </div>
 
-            <div class="tasktexts">
+            <div class="tasktexts w-100">
                 <h1>{{ taskTitle }}</h1>
                 <h2 v-if="isPeriodical">{{ formattedTime }}</h2>
             </div>
@@ -17,6 +17,7 @@
                 <a class="bi bi-pencil-square" aria-label="Edit Task" @click="editTask"></a>
             </div>
         </div>
+        <div style="height: 3px; width:100%"></div>
     </div>
 </template>
 
@@ -91,17 +92,21 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+$cardcolor:  #333333;
+$frontcolor: darkorange;
 .taskcard {
     height: 108px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 0 0 0 10px;
+    padding: 0 0 0 15px;
+    background-color: $cardcolor;
+    filter:drop-shadow(6px 6px 0px #00000088)
 }
 
 .taskcheck {
     display: grid;
-
+    color: $frontcolor;
     * {
         height: 64px;
         width: 64px;
@@ -110,24 +115,10 @@ export default {
     }
 
     input[type=checkbox] {
-        // visibility: hidden;
         z-index: 2;
         opacity: 0%;
-
-        // +div .bi-check-square-fill {
-        //     display: none;
-        // }
     }
 
-    input[type=checkbox]:checked {
-        // +div .bi-square {
-        //     display: none;
-        // }
-
-        // +div .bi-check-square-fill {
-        //     display: unset;
-        // }
-    }
 
     p {
         font-size: 64px;
@@ -137,19 +128,18 @@ export default {
 }
 
 .tasktexts {
-    padding-left: 6px;
+    padding-left:9px;
     overflow: hidden;
-    width: 100%;
-
+    color: $frontcolor;
     * {
         margin: 0 0 0 0;
         line-height: 1em;
-
     }
 
     h1 {
         font-size: 56px;
         white-space: nowrap;
+        font-weight: bold;
     }
 
     h2 {
@@ -164,7 +154,8 @@ export default {
     a {
         font-size: 36px;
         text-align: right;
-        color: #171717;
+        color: $frontcolor;
+        // color: #171717;  
     }
 }
 </style>
