@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import {Modal} from 'bootstrap';
+import { Modal } from 'bootstrap';
 export default {
     methods: {
         closeModal() {
@@ -32,11 +32,15 @@ export default {
             modal.hide()
         },
         resetTimer() {
-            // Clean up timerDataArray, remove localStorage
-            this.$root.timerDataArray.splice(0);
-            localStorage.removeItem('TimerDataArrayStorage');
-            
-            location.reload();
+            const isDelete = confirm("確定要重設本程式？")
+            if (isDelete) {
+                // Clean up timerDataArray, remove localStorage
+                this.$root.timerDataArray.splice(0);
+                localStorage.removeItem('TimerDataArrayStorage');
+
+                location.reload();
+            }
+
         }
     }
 }

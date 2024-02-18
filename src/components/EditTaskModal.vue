@@ -66,13 +66,9 @@
 								<span class="col-1">:</span>
 								<div class="col-3">
 
-									<select class="form-control " v-model="selectedMinute">
-										<option selected value="0">00</option>
-										<option>10</option>
-										<option>20</option>
-										<option>30</option>
-										<option>40</option>
-										<option>50</option>
+									<select class="form-control" v-model="selectedMinute">
+										<!-- <option selected value="0">00</option> -->
+										<option v-for="minute in minutes" :key="minute" :value="minute">{{ minute.toString().padStart(2,'0') }}</option>
 									</select>
 								</div>
 
@@ -108,6 +104,7 @@ export default {
 			selectedHour: 0,
 			selectedMinute: 0,
 			isPM: 1,
+			minutes: Array.from({length:60}, (_,index) => index.toString())
 		}
 	},
 	props: ['show', 'editTaskData'],
