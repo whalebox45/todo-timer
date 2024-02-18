@@ -1,11 +1,13 @@
 # 資料結構
 ```json
 {
-    "id": "12345",
-    "name": "task 1",
+    "id": "12345678-abcd-4000-0000-0123456789ab",
+    "taskTitle": "task 1",
     "isChecked": false,
-    "isPeriodic": true,
-    "refreshTime": "80000",
+    "isPeriodical": true,
+    "lastCheckedAt": "2024-01-01T00:00:00.000Z",
+    "refreshTime": 0,
+    "taskTitle": "Title 1"
 }
 ```
 
