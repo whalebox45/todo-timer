@@ -55,6 +55,11 @@ export default {
                 const secs = dt.getSeconds() + (60 * dt.getMinutes()) + (60 * 60 * dt.getHours());
                 const diff = this.refreshTime - secs
                 this.elapsedTime = (diff < 0) ? diff + 86400 : diff;
+
+                if(this.elapsedTime < 1 && this.isPeriodical) {
+                    this.localIsChecked = false;
+                    this.$emit('checkbox-change',{ id: this.id, isChecked: false });
+                }
             }, 1000);
         },
         stopTimer() {
@@ -73,6 +78,10 @@ export default {
             this.localIsChecked = !this.localIsChecked;
             // alert(`Checkbox is now ${this.localIsChecked ? 'checked' : 'unchecked'}`);
             this.$emit('checkbox-change', { id: this.id, isChecked: this.localIsChecked });
+            if (!this.localIsChecked && this.elapsedTime <= 0) {
+                this.elapsedTime = this.refreshTime;
+                this.startTimer();
+            }
         },
     },
     watch: {
