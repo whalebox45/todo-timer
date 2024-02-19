@@ -1,5 +1,5 @@
 <template>
-	<div class="modal fade" id="AddTaskModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal fade" id="AddTaskModal" tabindex="-1" role="dialog" aria-hidden="true" v-show="show">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -16,24 +16,32 @@
 						</div>
 
 						<div class="form-group container-fluid row">
-							<h5 class="col-3">週期性</h5>
+							<h5 class="col-3">定時</h5>
 							<span class="col-3">
 
 								<input class="form-check-input" type="radio" id="periodRadio1" name="periodRadio"
-									v-model="isPeriodical" value="0">
+									v-model="isTimer" value="0">
 								<label class="form-check-label" for="periodRadio1">否</label>
 							</span>
 							<span class="col-3">
 
 								<input class="form-check-input" type="radio" id="periodRadio2" name="periodRadio"
-									v-model="isPeriodical" value="1">
-								<label class="form-check-label" for="periodRadio2">是</label>
+									v-model="isTimer" value="1">
+								<label class="form-check-label" for="periodRadio2">每日重複</label>
 							</span>
 						</div>
 
-						<div class="form-group container-fluid" v-if="isPeriodical == 1">
+						<div class="form-group container-fluid" v-if="isTimer == 1">
 							<div class="row">
-								<h5 class="col-3">重置時間</h5>
+								<h5>重置時間</h5>
+							</div>
+
+
+							<div class="row">
+								<h5 class="col-3">日期</h5>
+								<span class="col-4">
+									<input type="date" v-model="selectedDate">
+								</span>
 								<span class="col-4">
 
 									<input class="form-check-input" type="radio" id="isPMRadio1" name="isPMRadio"
@@ -47,6 +55,7 @@
 							</div>
 
 							<div class="row">
+								<h5 class="col-3">時刻</h5>
 								<div class="col-3">
 									<select class="form-control" v-model="selectedHour">
 										<option selected value="0">12</option>
@@ -64,12 +73,14 @@
 									</select>
 
 								</div>
-								
+
 								<span class="col-1">:</span>
 								<div class="col-3">
 
 									<select class="form-control" v-model="selectedMinute">
-										<option v-for="minute in minutes" :key="minute" :value="minute">{{ minute.toString().padStart(2,'0') }}</option>
+										<option v-for="minute in minutes" :key="minute" :value="minute">
+											{{ minute.toString().padStart(2, '0') }}
+										</option>
 									</select>
 								</div>
 							</div>
@@ -91,20 +102,43 @@
 <script>
 import { Modal } from 'bootstrap';
 import App from '../App.vue';
+import dayjs from 'dayjs';
 
 
 export default {
 	data() {
 		return {
+			selectedDate: dayjs().format('YYYY-MM-DD'),
 			taskTitle: '',
-			isPeriodical: 0,
+			isTimer: 0,
 			selectedHour: 0,
 			selectedMinute: 0,
 			isPM: 1,
-			minutes: Array.from({length:60}, (_,index) => index.toString())
+			minutes: Array.from({ length: 60 }, (_, index) => index.toString())
 		}
 	},
-	props: [],
+	props: ['show'],
+	watch: {
+		show(newVal) {
+			let AddTaskModal = document.getElementById('AddTaskModal');
+			let modal = Modal.getOrCreateInstance(AddTaskModal);
+			if (newVal) {
+				modal.show();
+			} else {
+				modal.hide();
+			}
+		},
+	},
+	mounted() {
+
+		const addTaskModal = document.getElementById('AddTaskModal');
+		const modal = Modal.getOrCreateInstance(addTaskModal);
+
+		// Emit an event when the modal is hidden
+		modal._element.addEventListener('hidden.bs.modal', () => {
+			this.$emit('modal-hidden');
+		});
+	},
 	methods: {
 		closeModal() {
 			let AddTaskModal = document.getElementById('AddTaskModal');
@@ -117,10 +151,28 @@ export default {
 
 			if (isPM === 1) timeInSeconds += 12 * 3600;
 
-			const isPeriodical = parseInt(this.isPeriodical);
+			const isTimer = parseInt(this.isTimer) === 1;
+
+
+
+			let setHour = (isPM === 1) ? this.selectedHour + 12 : this.selectedHour;
+			let setMinute = this.selectedMinute;
+			let setDate = this.selectedDate;
+
+			let setTodoTime;
+			if (isTimer) {
+				setTodoTime = dayjs(setDate).hour(setHour).minute(setMinute).second(0).millisecond(0);
+			} else {
+				setTodoTime = dayjs().second(0).millisecond(0);
+			}
+
 
 			// Create a new instance of the Timer class using the static method
-			const newTimer = App.setup().Timer.createTask(this.taskTitle, isPeriodical === 1 ? timeInSeconds : 0, isPeriodical === 1, false);
+			const newTimer = App.setup().Timer.createTask(
+				this.taskTitle, setTodoTime, isTimer, false, App.setup().PERIOD_TYPES.daily);
+
+			// console.log(newTimer);
+
 
 			// Access the timerDataArray from the root Vue instance
 			this.$root.timerDataArray.push(newTimer);
@@ -128,9 +180,10 @@ export default {
 			// Save the updated timerDataArray to localStorage
 			localStorage.setItem('TimerDataArrayStorage', JSON.stringify(this.$root.timerDataArray));
 
-			// Close the modal
+			// Cose the modal
 			this.closeModal();
 		}
 	}
 };
-</script>
+</script>																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																										
+																																																																																													   																																																																																																																																																																													

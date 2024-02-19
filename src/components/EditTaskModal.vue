@@ -16,22 +16,30 @@
 						</div>
 
 						<div class="form-group container-fluid row">
-							<h5 class="col-3">週期性</h5>
+							<h5 class="col-3">定時</h5>
 							<span class="col-3">
 								<input class="form-check-input" type="radio" id="periodRadio1" name="periodRadio"
-									v-model="isPeriodical" value="0">
+									v-model="isTimer" value="0">
 								<label class="form-check-label" for="periodRadio1">否</label>
 							</span>
 							<span class="col-3">
 								<input class="form-check-input" type="radio" id="periodRadio2" name="periodRadio"
-									v-model="isPeriodical" value="1">
-								<label class="form-check-label" for="periodRadio2">是</label>
+									v-model="isTimer" value="1">
+								<label class="form-check-label" for="periodRadio2">每日重複</label>
 							</span>
 						</div>
 
-						<div class="form-group container-fluid" v-if="isPeriodical == 1">
+						<div class="form-group container-fluid" v-if="isTimer == 1">
 							<div class="row">
-								<h5 class="col-3">重置時間</h5>
+								<h5>重置時間</h5>
+							</div>
+
+
+							<div class="row">
+								<h5 class="col-3">日期</h5>
+								<span class="col-4">
+									<input type="date" v-model="selectedDate" id="">
+								</span>
 								<span class="col-4">
 
 									<input class="form-check-input" type="radio" id="isPMRadio1" name="isPMRadio"
@@ -42,10 +50,10 @@
 										v-model="isPM" value="0">
 									<label class="form-check-label" for="isPMRadio2">上午</label>
 								</span>
-
 							</div>
 
 							<div class="row">
+								<h5 class="col-3">時刻</h5>
 								<div class="col-3">
 
 									<select class="form-control " v-model="selectedHour">
@@ -68,14 +76,15 @@
 
 									<select class="form-control" v-model="selectedMinute">
 										<!-- <option selected value="0">00</option> -->
-										<option v-for="minute in minutes" :key="minute" :value="minute">{{ minute.toString().padStart(2,'0') }}</option>
+										<option v-for="minute in minutes" :key="minute" :value="minute">{{
+											minute.toString().padStart(2, '0') }}</option>
 									</select>
 								</div>
 
 							</div>
 						</div>
 					</form>
-
+					<hr class="border border-primary" />
 					<div class="form-group container-fluid row">
 						<h5 class="col-3">刪除</h5>
 						<div class="col-7"></div>
@@ -94,36 +103,48 @@
 
 <script>
 import { Modal } from 'bootstrap';
-
+import dayjs from 'dayjs';
 
 export default {
 	data() {
 		return {
+			selectedDate: dayjs().format('YYYY-MM-DD'),
 			taskTitle: '',
-			isPeriodical: 0,
+			isTimer: 0,
 			selectedHour: 0,
 			selectedMinute: 0,
 			isPM: 1,
-			minutes: Array.from({length:60}, (_,index) => index.toString())
+			minutes: Array.from({ length: 60 }, (_, index) => index.toString())
 		}
 	},
 	props: ['show', 'editTaskData'],
 	watch: {
+		selectedDate(newdate, olddate) {
+			console.log(newdate)
+			if (!newdate) {
+				this.selectedDate = dayjs().format('YYYY-MM-DD');
+			}
+		},
 		editTaskData: {
 			immediate: true, // Log the initial value
 			handler(newVal) {
-
 				// Update taskTitle based on the new value of editTaskData
 				if (newVal) {
 					this.id = newVal.id;
 					this.taskTitle = newVal.taskTitle;
-					this.isPeriodical = newVal.isPeriodical ? 1 : 0;
-					if (newVal.isPeriodical) {
-						const timeHour = Math.floor(newVal.refreshTime / 3600);
-						const timeMinute = Math.floor(newVal.refreshTime / 60 % 60);
+					this.isTimer = newVal.isTimer ? 1 : 0;
+					if (newVal.isTimer) {
+						// console.log(newVal.setTodoTime);
+
+						const timedayjs = dayjs(newVal.setTodoTime);
+
+						const timeHour = timedayjs.hour();
+						const timeMinute = timedayjs.minute();
 						this.isPM = (timeHour >= 12) ? 1 : 0;
 						this.selectedHour = timeHour % 12;
 						this.selectedMinute = timeMinute;
+
+						this.selectedDate = dayjs(timedayjs).format('YYYY-MM-DD');
 					}
 				}
 			},
@@ -159,17 +180,32 @@ export default {
 			modal.hide()
 		},
 		saveClick() {
-			let timeInSeconds = this.selectedHour * 3600 + this.selectedMinute * 60;
+			// console.log(this.selectedDate, this.selectedHour, this.selectedMinute);
+			// let timeInSeconds = this.selectedHour * 3600 + this.selectedMinute * 60;
 			const isPM = parseInt(this.isPM)
 
-			if (isPM === 1) timeInSeconds += 12 * 3600;
+			// if (isPM === 1) timeInSeconds += 12 * 3600;
 
-			const isPeriodical = parseInt(this.isPeriodical);
+			const isTimer = parseInt(this.isTimer);
+
+			let setHour = (isPM === 1) ? this.selectedHour + 12 : this.selectedHour;
+			let setMinute = this.selectedMinute;
+			let setDate = this.selectedDate;
+
+
+			let todoTime;
+			if (isTimer === 1) {
+				todoTime = dayjs(setDate).hour(setHour).minute(setMinute).second(0).millisecond(0);
+			} else {
+				todoTime = dayjs().second(0).millisecond(0);
+			}
+
+			// console.log(todoTime)
 
 			this.$root.updateTimerById(this.id, {
 				taskTitle: this.taskTitle,
-				refreshTime: isPeriodical === 1 ? timeInSeconds : 0,
-				isPeriodical: isPeriodical === 1,
+				setTodoTime: todoTime,
+				isTimer: isTimer === 1,
 			});
 
 			// Save the updated timerDataArray to localStorage
@@ -179,13 +215,13 @@ export default {
 		},
 		deleteClick() {
 			if (confirm("您確定要刪除事項?")) {
-				this.$root.deleteTimerById(this.editTaskData.id);
-
-				localStorage.setItem('TimerDataArrayStorage', JSON.stringify(this.$root.timerDataArray));
-
+				this.$emit('delete-task', this.editTaskData.id);
+				// this.$root.deleteTimerById(this.editTaskData.id);
+				// localStorage.setItem('TimerDataArrayStorage', JSON.stringify(this.$root.timerDataArray));
 				this.closeModal();
 			}
 		}
 	}
 };
 </script>
+<style></style>
