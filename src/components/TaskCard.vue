@@ -11,7 +11,7 @@
 
             <div class="tasktexts w-100">
                 <h1>{{ taskTitle }}</h1>
-                <h2 v-if="isPeriodical">{{ formattedTime }}</h2>
+                <h2 v-if="isTimer">{{ formattedTime }}</h2>
             </div>
             <div class="taskcontrol">
                 <a class="bi bi-pencil-square" aria-label="Edit Task" @click="editTask"></a>
@@ -22,13 +22,16 @@
 </template>
 
 <script>
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
 export default {
     props: {
         id: String,
         taskTitle: String,
         isChecked: Boolean,
-        refreshTime: Number,
-        isPeriodical: Boolean
+        setTodoTime: Object,
+        isTimer: Boolean
     },
     data() {
         return {
@@ -39,9 +42,14 @@ export default {
     },
     computed: {
         formattedTime() {
-            const hours = Math.floor(this.elapsedTime / 3600);
-            const minutes = Math.floor((this.elapsedTime % 3600) / 60);
-            const seconds = this.elapsedTime % 60;
+            // console.log(this.elapsedTime)
+            const hours = dayjs.duration(this.elapsedTime).hours();
+            const minutes = dayjs.duration(this.elapsedTime).minutes();
+            let seconds = dayjs.duration(this.elapsedTime).seconds();
+            const ms = dayjs.duration(this.elapsedTime).milliseconds();
+            // console.log(hours, minutes, seconds, ms)
+            if(ms>=500) seconds += 1;
+            
             return `${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
         },
     },
@@ -51,16 +59,21 @@ export default {
         },
         startTimer() {
             this.timerInterval = setInterval(() => {
-                const dt = new Date();
-                const secs = dt.getSeconds() + (60 * dt.getMinutes()) + (60 * 60 * dt.getHours());
-                const diff = this.refreshTime - secs;
-                this.elapsedTime = (diff < 0) ? diff + 86400 : diff;
+                const dt = dayjs(this.setTodoTime)
 
-                if(this.elapsedTime <= 0 && this.isPeriodical) {
-                    this.localIsChecked = false;
-                    this.$emit('checkbox-change',{ id: this.id, isChecked: false });
+                const todayHHMMSS = dayjs().hour(dt.hour()).minute(dt.minute()).second(dt.second());
+                
+                const now = dayjs();
+
+                if(todayHHMMSS.isAfter(now)){
+                    this.elapsedTime = todayHHMMSS.diff(now)
+                } else {
+                    this.elapsedTime = todayHHMMSS.add(1,'day').diff(now)
                 }
-            }, 1000);
+
+                console.log(this.id, this.elapsedTime)
+
+            }, 250);
         },
         stopTimer() {
             clearInterval(this.timerInterval);
@@ -70,8 +83,8 @@ export default {
             this.$emit('edit-task', {
                 id: this.id,
                 taskTitle: this.taskTitle,
-                refreshTime: this.refreshTime,
-                isPeriodical: this.isPeriodical
+                setTodoTime: this.setTodoTime,
+                isTimer: this.isTimer
             });
         },
         handleCheckboxChange() {
@@ -79,13 +92,13 @@ export default {
             // alert(`Checkbox is now ${this.localIsChecked ? 'checked' : 'unchecked'}`);
             this.$emit('checkbox-change', { id: this.id, isChecked: this.localIsChecked });
             if (!this.localIsChecked && this.elapsedTime <= 0) {
-                this.elapsedTime = this.refreshTime;
+                this.elapsedTime = this.setTodoTime;
                 this.startTimer();
             }
         },
     },
     watch: {
-        refreshTime(newVal) {
+        setTodoTime(newVal) {
             this.stopTimer();
             this.elapsedTime = 0;
             this.startTimer();
