@@ -1,5 +1,6 @@
 import { reactive, onMounted } from 'vue';
 import { Modal, Offcanvas } from 'bootstrap';
+import dayjs from 'dayjs';
 
 import TaskCard from './components/TaskCard.vue';
 import AddTaskModal from './components/AddTaskModal.vue';
@@ -7,23 +8,31 @@ import SettingModal from './components/SettingModal.vue';
 import EditTaskModal from './components/EditTaskModal.vue';
 import MenuOffcanvas from './components/MenuOffcanvas.vue';
 
+const PERIOD_TYPES = {
+  once: 0,
+  daily: 10,
+  weekly: 20,
+  monthly: 30
+}
+
 class Timer {
-  constructor(taskTitle, refreshTime, isPeriodical, isChecked) {
+
+  constructor(taskTitle, setTodoTime, isTimer, isChecked, periodType) {
     this.id = crypto.randomUUID();
     this.taskTitle = taskTitle;
     this.isChecked = isChecked;
-    this.isPeriodical = isPeriodical;
-    this.refreshTime = refreshTime;
+    this.isTimer = isTimer;
+    this.setTodoTime = setTodoTime;
+    this.periodType = periodType;
     this.lastCheckAt = {};
   }
-  static createTask(taskTitle, refreshTime, isPeriodical, isChecked) {
-    return new Timer(taskTitle, refreshTime, isPeriodical, false);
+  static createTask(taskTitle, setTodoTime, isTimer, isChecked, periodType) {
+    return new Timer(taskTitle, setTodoTime, isTimer, isChecked, periodType);
   }
 }
 
 export default {
   setup() {
-
 
     const timerDataArray = reactive([]);
     const editTaskData = reactive({});
@@ -34,8 +43,10 @@ export default {
     const resetDefaultTask = function () {
       localStorage.removeItem('TimerDataArrayStorage');
       // Add default tasks
-      timerDataArray.push(Timer.createTask('Task 1', 0, false, true));
-      timerDataArray.push(Timer.createTask('Task 2', 43200, true, false));
+      timerDataArray.push(Timer.createTask('Task 1', dayjs('2018-04-13 19:18').second(0).millisecond(0),
+        false, false, PERIOD_TYPES.once));
+      timerDataArray.push(Timer.createTask('Task 2', dayjs('2018-04-13 19:18').hour(12).minute(0).second(0).millisecond(0),
+        true, false, PERIOD_TYPES.daily));
       // Save the default tasks to localStorage
       localStorage.setItem('TimerDataArrayStorage', JSON.stringify(timerDataArray));
     }
@@ -45,7 +56,7 @@ export default {
         const storedTasks = JSON.parse(storedData);
         storedTasks.forEach(task => {
           // Parse the stored dㄎata and push it to the timerDataArray
-          timerDataArray.push(new Timer(task.taskTitle, task.refreshTime, task.isPeriodical, task.isChecked));
+          timerDataArray.push(new Timer(task.taskTitle, dayjs(task.setTodoTime), task.isTimer, task.isChecked, task.periodType));
         });
       } catch (e) {
         alert("儲存資料錯誤，將重設本程式")
@@ -57,7 +68,7 @@ export default {
     }
 
     // debugger;
-    return { timerDataArray, Timer, editTaskData };
+    return { timerDataArray, Timer, editTaskData, PERIOD_TYPES };
   },
   mounted() {
   },
@@ -68,6 +79,8 @@ export default {
     return {
       showDrawerMenu: false,
       showEditModal: false,
+      showAddModal: false,
+      showSettingModal: false,
     };
   },
   methods: {
@@ -76,14 +89,14 @@ export default {
       const offcanvas = Offcanvas.getOrCreateInstance(DrawerOffcanvas);
       offcanvas.show();
     },
-    toggleDrawerMenu() {
-      this.showDrawerMenu = !this.showDrawerMenu;
+    toggleDrawerMenu() { this.showDrawerMenu = !this.showDrawerMenu; },
+    openModal() {this.showAddModal = true;},
+    resetAddModal(){this.showAddModal = false;},
+    openEditModal(taskData) {
+      this.editTaskData = taskData;
+      this.showEditModal = true;
     },
-    openModal() {
-      const AddTaskModal = document.getElementById('AddTaskModal');
-      const modal = Modal.getOrCreateInstance(AddTaskModal);
-      modal.show()
-    },
+    resetEditModal() { this.showEditModal = false; },
     openSettingModal() {
       const DrawerOffcanvas = document.getElementById('menuOffcanvas');
       const offcanvas = Offcanvas.getOrCreateInstance(DrawerOffcanvas);
@@ -93,22 +106,17 @@ export default {
       modal.show();
     },
     handleCheckboxChange({ id, isChecked }) {
-      console.log(1);
+      // console.log(1);
       const index = this.timerDataArray.findIndex((timer) => timer.id === id);
       if (index !== -1) {
         // this.$set(this.timerDataArray, index, { ...this.timerDataArray[index], isChecked });
         this.timerDataArray[index].isChecked = isChecked;
-        if(isChecked){
+        if (isChecked) {
           this.timerDataArray[index].lastCheckAt = new Date();
         }
         localStorage.setItem('TimerDataArrayStorage', JSON.stringify(this.timerDataArray));
       }
     },
-    openEditModal(taskData) {
-      this.editTaskData = taskData;
-      this.showEditModal = true;
-    },
-    resetEditModal() { this.showEditModal = false; },
     updateTimerById(id, newData) {
       const index = this.timerDataArray.findIndex(timer => timer.id === id);
       if (index !== -1) {
@@ -117,8 +125,15 @@ export default {
     },
     deleteTimerById(id) {
       console.log(id);
+      const taskCardComponent = this.$refs[`taskCard_${id}`][0];
+      if (taskCardComponent) { taskCardComponent.stopTimer();}
+
       const index = this.timerDataArray.findIndex(timer => timer.id === id);
-      if (index !== -1) this.timerDataArray.splice(index, 1);
+      if (index !== -1) {
+        console.log(this.timerDataArray[index])
+        this.timerDataArray.splice(index, 1);
+        localStorage.setItem('TimerDataArrayStorage', JSON.stringify(this.timerDataArray));
+      }
     },
 
   }
