@@ -11,9 +11,9 @@
     </div>
 
     <div class="row gy-3 gx-4 mx-4">
-      <TaskCard v-for="t in timerDataArray" v-bind:key="t.id" :id="t.id" :taskTitle="t.taskTitle" :isChecked="t.isChecked"
-        :refreshTime="t.refreshTime" :isPeriodical="t.isPeriodical" @edit-task="openEditModal"
-        @checkbox-change="handleCheckboxChange" />
+      <TaskCard v-bind:ref="'taskCard_' + t.id" v-for="t in timerDataArray" v-bind:key="t.id" :id="t.id" :taskTitle="t.taskTitle" :isChecked="t.isChecked"
+        :setTodoTime="t.setTodoTime" :isTimer="t.isTimer" @edit-task="openEditModal"
+        @checkbox-change="handleCheckboxChange" @delete-task="deleteTimerById"/>
     </div>
 
 
@@ -36,8 +36,9 @@
 
   <MenuOffcanvas />
 
-  <AddTaskModal />
-  <EditTaskModal :show="showEditModal" @modal-hidden="resetEditModal" :editTaskData="editTaskData" />
+  <AddTaskModal :show="showAddModal" @modal-hidden="resetAddModal"/>
+  <EditTaskModal :show="showEditModal" @modal-hidden="resetEditModal"
+    @delete-task="deleteTimerById" :editTaskData="editTaskData" />
   <SettingModal />
 </template>
 
