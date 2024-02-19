@@ -53,10 +53,10 @@ export default {
             this.timerInterval = setInterval(() => {
                 const dt = new Date();
                 const secs = dt.getSeconds() + (60 * dt.getMinutes()) + (60 * 60 * dt.getHours());
-                const diff = this.refreshTime - secs
+                const diff = this.refreshTime - secs;
                 this.elapsedTime = (diff < 0) ? diff + 86400 : diff;
 
-                if(this.elapsedTime < 1 && this.isPeriodical) {
+                if(this.elapsedTime <= 0 && this.isPeriodical) {
                     this.localIsChecked = false;
                     this.$emit('checkbox-change',{ id: this.id, isChecked: false });
                 }

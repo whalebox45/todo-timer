@@ -9,11 +9,11 @@ import MenuOffcanvas from './components/MenuOffcanvas.vue';
 
 class Timer {
   constructor(taskTitle, refreshTime, isPeriodical, isChecked) {
-    this.taskTitle = taskTitle;
-    this.refreshTime = refreshTime;
-    this.isPeriodical = isPeriodical;
-    this.isChecked = isChecked;
     this.id = crypto.randomUUID();
+    this.taskTitle = taskTitle;
+    this.isChecked = isChecked;
+    this.isPeriodical = isPeriodical;
+    this.refreshTime = refreshTime;
     this.lastCheckAt = {};
   }
   static createTask(taskTitle, refreshTime, isPeriodical, isChecked) {
