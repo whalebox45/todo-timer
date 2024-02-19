@@ -6,12 +6,12 @@
 
                 <div class="h-100 w-100 d-flex align-items-end">
                     <div class="menulist list-group list-group-flush w-100">
-                        <a href="#" class="list-group-item w-100" @click="openSettingModal">
+                        <!-- <a href="#" class="list-group-item w-100" @click="openSettingModal">
                             <h2>設定</h2>
                         </a>
                         <a href="#" class="list-group-item w-100" @click="openSettingModal">
                             <h2>設定</h2>
-                        </a>
+                        </a> -->
                         <a href="#" class="list-group-item w-100" @click="openSettingModal">
                             <h2>設定</h2>
                         </a>

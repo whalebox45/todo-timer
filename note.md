@@ -4,9 +4,9 @@
     "id": "12345678-abcd-4000-0000-0123456789ab",
     "taskTitle": "task 1",
     "isChecked": false,
-    "isPeriodical": true,
+    "isTimer": true,
     "lastCheckedAt": "2024-01-01T00:00:00.000Z",
-    "refreshTime": 0,
+    "setTodoTime": 0,
     "taskTitle": "Title 1"
 }
 ```
@@ -16,4 +16,4 @@
 # 排序功能(Planned)
 0. 是否完成
 1. 剩餘時間
-2. 是否週期性
+2. 是否定時
