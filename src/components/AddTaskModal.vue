@@ -20,33 +20,24 @@
 							<div class="col-9">
 								<div class="row">
 									<span class="col">
-										<input class="form-check-input" type="radio" id="periodRadio1" name="periodRadio"
+										<input class="form-check-input" type="radio" id="isTimerRadio1" name="isTimerRadio"
 											v-model="isTimer" value="0">
-										<label class="form-check-label" for="periodRadio1">否</label>
+										<label class="form-check-label" for="isTimerRadio1">否</label>
 									</span>
 									<span class="col">
-										<input class="form-check-input" type="radio" id="periodRadio2" name="periodRadio"
+										<input class="form-check-input" type="radio" id="isTimerRadio2" name="isTimerRadio"
 											v-model="isTimer" value="1">
-										<label class="form-check-label" for="periodRadio2">每日重複</label>
+										<label class="form-check-label" for="isTimerRadio2">每日重複</label>
 									</span>
 								</div>
-								<div class="row">
-									<span class="col">
-										<input class="form-check-input" type="radio" id="periodRadio3" name="test" value="0" disabled>
-										<label class="form-check-label" for="periodRadio3">每週重複</label>
-									</span>
-									<span class="col">
-										<input class="form-check-input" type="radio" id="periodRadio4" name="test" value="1" disabled>
-										<label class="form-check-label" for="periodRadio4">每月重複</label>
-									</span>
-								</div>
+
 							</div>
 
 						</div>
 
 						<div class="form-group container-fluid" v-if="isTimer == 1">
 							<div class="row">
-								<h5>重置時間</h5>
+								<h5>設定時間</h5>
 							</div>
 
 
@@ -95,6 +86,36 @@
 											{{ minute.toString().padStart(2, '0') }}
 										</option>
 									</select>
+								</div>
+							</div>
+
+							<div class="row">
+								<h5 class="col-3">重複性</h5>
+								<div class="col-9">
+									<div class="row">
+										<span class="col">
+											<input class="form-check-input" type="radio" id="periodRadio0" name="test"
+												value="0" disabled>
+											<label class="form-check-label" for="periodRadio0">不重複</label>
+										</span>
+										<span class="col">
+											<input class="form-check-input" type="radio" id="periodRadio1" name="test"
+												value="1" disabled>
+											<label class="form-check-label" for="periodRadio1">每日</label>
+										</span>
+									</div>
+									<div class="row">
+										<span class="col">
+											<input class="form-check-input" type="radio" id="periodRadio2" name="test"
+												value="0" disabled>
+											<label class="form-check-label" for="periodRadio2">每週</label>
+										</span>
+										<span class="col">
+											<input class="form-check-input" type="radio" id="periodRadio3" name="test"
+												value="1" disabled>
+											<label class="form-check-label" for="periodRadio3">每月</label>
+										</span>
+									</div>
 								</div>
 							</div>
 						</div>
