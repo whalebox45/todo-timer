@@ -88,24 +88,6 @@ $navfg: orange;
   background-color: #888888;
 }
 
-// .drawermenu {
-//   z-index: 5;
-//   height: 100vh;
-//   width: 30vw;
-//   background-color: $navfg;
-//   position: fixed;
-//   top: 0;
-//   right: 0;
-
-//   /* Slide-in animation */
-//   transition: transform 0.3s ease-in-out;
-//   transform: translateX(30vw);
-// }
-
-// .drawermenu.show {
-//   transform: translateX(0);
-// }
-
 .navbar {
   z-index: 10;
   height: 72px;
