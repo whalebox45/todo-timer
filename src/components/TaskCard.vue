@@ -71,7 +71,7 @@ export default {
                     this.elapsedTime = todayHHMMSS.add(1,'day').diff(now)
                 }
 
-                console.log(this.id, this.elapsedTime)
+                // console.log(this.id, this.elapsedTime)
 
             }, 250);
         },
@@ -106,7 +106,7 @@ export default {
     },
     created() {
         this.startTimer();
-        console.log(this)
+        // console.log(this)
     },
     beforeDestroy() {
         this.stopTimer();
@@ -160,7 +160,6 @@ $frontcolor: darkorange;
 
     h1 {
         font-size: 56px;
-        white-space: nowrap;
         font-weight: bold;
     }
 

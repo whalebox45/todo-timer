@@ -120,7 +120,7 @@ export default {
 	props: ['show', 'editTaskData'],
 	watch: {
 		selectedDate(newdate, olddate) {
-			console.log(newdate)
+			console.log(newdate, 'picked')
 			if (!newdate) {
 				this.selectedDate = dayjs().format('YYYY-MM-DD');
 			}

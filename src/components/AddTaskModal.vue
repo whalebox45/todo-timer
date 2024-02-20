@@ -17,18 +17,31 @@
 
 						<div class="form-group container-fluid row">
 							<h5 class="col-3">定時</h5>
-							<span class="col-3">
+							<div class="col-9">
+								<div class="row">
+									<span class="col">
+										<input class="form-check-input" type="radio" id="periodRadio1" name="periodRadio"
+											v-model="isTimer" value="0">
+										<label class="form-check-label" for="periodRadio1">否</label>
+									</span>
+									<span class="col">
+										<input class="form-check-input" type="radio" id="periodRadio2" name="periodRadio"
+											v-model="isTimer" value="1">
+										<label class="form-check-label" for="periodRadio2">每日重複</label>
+									</span>
+								</div>
+								<div class="row">
+									<span class="col">
+										<input class="form-check-input" type="radio" id="periodRadio3" name="test" value="0" disabled>
+										<label class="form-check-label" for="periodRadio3">每週重複</label>
+									</span>
+									<span class="col">
+										<input class="form-check-input" type="radio" id="periodRadio4" name="test" value="1" disabled>
+										<label class="form-check-label" for="periodRadio4">每月重複</label>
+									</span>
+								</div>
+							</div>
 
-								<input class="form-check-input" type="radio" id="periodRadio1" name="periodRadio"
-									v-model="isTimer" value="0">
-								<label class="form-check-label" for="periodRadio1">否</label>
-							</span>
-							<span class="col-3">
-
-								<input class="form-check-input" type="radio" id="periodRadio2" name="periodRadio"
-									v-model="isTimer" value="1">
-								<label class="form-check-label" for="periodRadio2">每日重複</label>
-							</span>
 						</div>
 
 						<div class="form-group container-fluid" v-if="isTimer == 1">

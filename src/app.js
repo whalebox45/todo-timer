@@ -77,7 +77,6 @@ export default {
   },
   data() {
     return {
-      showDrawerMenu: false,
       showEditModal: false,
       showAddModal: false,
       showSettingModal: false,
@@ -89,7 +88,6 @@ export default {
       const offcanvas = Offcanvas.getOrCreateInstance(DrawerOffcanvas);
       offcanvas.show();
     },
-    toggleDrawerMenu() { this.showDrawerMenu = !this.showDrawerMenu; },
     openModal() {this.showAddModal = true;},
     resetAddModal(){this.showAddModal = false;},
     openEditModal(taskData) {
@@ -106,7 +104,6 @@ export default {
       modal.show();
     },
     handleCheckboxChange({ id, isChecked }) {
-      // console.log(1);
       const index = this.timerDataArray.findIndex((timer) => timer.id === id);
       if (index !== -1) {
         // this.$set(this.timerDataArray, index, { ...this.timerDataArray[index], isChecked });
@@ -124,13 +121,13 @@ export default {
       }
     },
     deleteTimerById(id) {
-      console.log(id);
+      console.log(id, 'delete');
       const taskCardComponent = this.$refs[`taskCard_${id}`][0];
       if (taskCardComponent) { taskCardComponent.stopTimer();}
 
       const index = this.timerDataArray.findIndex(timer => timer.id === id);
       if (index !== -1) {
-        console.log(this.timerDataArray[index])
+        // console.log(this.timerDataArray[index])
         this.timerDataArray.splice(index, 1);
         localStorage.setItem('TimerDataArrayStorage', JSON.stringify(this.timerDataArray));
       }
