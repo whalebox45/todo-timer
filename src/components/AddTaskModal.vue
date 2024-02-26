@@ -28,7 +28,7 @@
 									<span class="col">
 										<input class="form-check-input" type="radio" id="isTimerRadio2" name="isTimerRadio"
 											v-model="isTimer" value="1">
-										<label class="form-check-label" for="isTimerRadio2">每日重複</label>
+										<label class="form-check-label" for="isTimerRadio2">是</label>
 									</span>
 								</div>
 

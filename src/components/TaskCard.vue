@@ -15,7 +15,17 @@
             </div>
             <div class="taskcontrol">
                 <a class="bi bi-pencil-square" aria-label="Edit Task" @click="editTask"></a>
-                <p>{{ periodType }}</p>
+                <!-- <p>{{ periodType }}</p> -->
+
+                <div class="tasktypeicon">
+                    <p class="bi bi-fire" v-if="!isTimer"></p>
+                    <p class="bi bi-hourglass" v-if="isTimer && periodType == 0"></p>
+                    <p class="bi bi-sun" v-if="isTimer && periodType == 10"></p>
+                    <p class="bi bi-calendar3-week" v-if="isTimer && periodType == 20"></p>
+                    <p class="bi bi-calendar3" v-if="isTimer && periodType == 30"></p>
+
+
+                </div>
             </div>
         </div>
         <div style="height: 3px; width:100%"></div>
@@ -215,13 +225,21 @@ $frontcolor: darkorange;
 }
 
 .taskcontrol {
-    margin-right: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: right;
 
     a {
         font-size: 36px;
-        text-align: right;
+        margin: 20px 20px 0 0;
         color: $frontcolor;
-        // color: #171717;  
     }
-}
-</style>
+
+    .tasktypeicon p {
+        margin: 0 10px 0 0 ;
+        font-size: 18px;
+        color: #888;
+    }
+}</style>
