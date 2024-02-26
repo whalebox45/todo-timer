@@ -67,7 +67,7 @@ export default {
 
             const ms = duration.milliseconds();
             // console.log(hours, minutes, seconds, ms)
-            if (ms >= 500) seconds += 1;
+            if (ms >= 500 && seconds<59) seconds += 1;
 
             if (this.periodType !== 10) {
                 return `${days}天 ${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
@@ -85,44 +85,57 @@ export default {
         startTimer() {
             this.timerInterval = setInterval(() => {
                 const dt = dayjs(this.setTodoTime)
-
                 const now = dayjs();
 
 
+
+                const todayHHMMSS = dayjs().hour(dt.hour()).minute(dt.minute()).second(dt.second()).millisecond(dt.millisecond());
+                const thisWeekdayHHMMSS = dayjs().weekday(dt.weekday()).hour(dt.hour()).minute(dt.minute()).second(dt.second()).millisecond(dt.millisecond());
+                
+                const daysInMonth = dt.daysInMonth();
+                const dayOfMonth = Math.min(dt.date(), daysInMonth);
+                const thisMonthDayHHMMSS = dayjs().date(dayOfMonth).hour(dt.hour()).minute(dt.minute()).second(dt.second()).millisecond(dt.millisecond());
+
+
                 if (this.periodType === this.$root.PERIOD_TYPES.daily) {
-                    const todayHHMMSS = dayjs().hour(dt.hour()).minute(dt.minute()).second(dt.second());
 
                     if (todayHHMMSS.isAfter(now)) {
-                        this.elapsedTime = todayHHMMSS.diff(now)
+                        this.elapsedTime = todayHHMMSS.diff(now, "millisecond", true)
                     } else {
-                        this.elapsedTime = todayHHMMSS.add(1, 'day').diff(now)
+                        this.elapsedTime = todayHHMMSS.add(1, 'day').diff(now, "millisecond", true)
                     }
                 } else if (this.periodType === this.$root.PERIOD_TYPES.weekly) {
-                    const thisWeekdayHHMMSS = dayjs().weekday(dt.weekday()).hour(dt.hour()).minute(dt.minute()).second(dt.second());
 
                     if (dt.isAfter(now)) {
-                        this.elapsedTime = dt.diff(now)
+                        this.elapsedTime = dt.diff(now, "millisecond", true)
                     } else {
-                        this.elapsedTime = thisWeekdayHHMMSS.add(7, 'day').diff(now);
+                        this.elapsedTime = thisWeekdayHHMMSS.add(7, 'day').diff(now, "millisecond", true);
                     }
                 } else if (this.periodType === this.$root.PERIOD_TYPES.monthly) {
-                    const daysInMonth = dt.daysInMonth();
-                    const dayOfMonth = Math.min(dt.date(), daysInMonth);
-
-                    const thisMonthDayHHMMSS = dayjs().date(dayOfMonth).hour(dt.hour()).minute(dt.minute()).second(dt.second());
 
                     if (thisMonthDayHHMMSS.isAfter(now)) {
-                        this.elapsedTime = thisMonthDayHHMMSS.diff(now);
+                        this.elapsedTime = thisMonthDayHHMMSS.diff(now, "millisecond", true);
                     } else {
-                        this.elapsedTime = thisMonthDayHHMMSS.add(1, 'month').diff(now);
+                        this.elapsedTime = thisMonthDayHHMMSS.add(1, 'month').diff(now, "millisecond", true);
                     }
                 } else {
-                    if (todayHHMMSS.isAfter(now)) {
-                        this.elapsedTime = todayHHMMSS.diff(now)
+                    if (dt.isAfter(now)) {
+                        this.elapsedTime = dt.diff(now, "millisecond", true)    
                     } else {
                         this.elapsedTime = 0;
                     }
                 }
+
+                // console.log(now.millisecond(), this.elapsedTime)
+
+                // Check if elapsedTime is less than 1000
+                if (this.elapsedTime < 500 && this.isTimer) {
+                    // Uncheck the checkbox
+                    this.localIsChecked = false;
+                    // Emit checkbox change event
+                    this.$emit('checkbox-change', { id: this.id, isChecked: this.localIsChecked });
+                }
+
 
             }, 250);
         },
@@ -143,7 +156,8 @@ export default {
             this.localIsChecked = !this.localIsChecked;
             // alert(`Checkbox is now ${this.localIsChecked ? 'checked' : 'unchecked'}`);
             this.$emit('checkbox-change', { id: this.id, isChecked: this.localIsChecked });
-            if (!this.localIsChecked && this.elapsedTime <= 0) {
+            if (!this.localIsChecked && this.elapsedTime < 1000) {
+
                 this.elapsedTime = this.setTodoTime;
                 this.startTimer();
             }
@@ -239,8 +253,9 @@ $frontcolor: darkorange;
     }
 
     .tasktypeicon p {
-        margin: 0 10px 0 0 ;
+        margin: 0 10px 0 0;
         font-size: 18px;
         color: #888;
     }
-}</style>
+}
+</style>
