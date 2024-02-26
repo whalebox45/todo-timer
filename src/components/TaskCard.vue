@@ -129,7 +129,7 @@ export default {
                 // console.log(now.millisecond(), this.elapsedTime)
 
                 // Check if elapsedTime is less than 1000
-                if (this.elapsedTime < 500 && this.isTimer) {
+                if (this.elapsedTime < 500 && this.isTimer && this.periodType != this.$root.PERIOD_TYPES.once) {
                     // Uncheck the checkbox
                     this.localIsChecked = false;
                     // Emit checkbox change event
@@ -181,6 +181,7 @@ export default {
 </script>
 <style scoped lang="scss">
 $cardcolor: #333333;
+$auxcolor: #888888;
 $frontcolor: darkorange;
 
 .taskcard {
@@ -255,7 +256,7 @@ $frontcolor: darkorange;
     .tasktypeicon p {
         margin: 0 10px 0 0;
         font-size: 18px;
-        color: #888;
+        color: $auxcolor;
     }
 }
 </style>

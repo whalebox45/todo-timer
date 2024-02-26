@@ -113,7 +113,7 @@
 							</div>
 						</div>
 					</form>
-					<hr class="border border-primary" />
+					<hr class="border border-dark" />
 					<div class="form-group container-fluid row">
 						<h5 class="col-3">刪除</h5>
 						<div class="col-7"></div>
@@ -268,4 +268,8 @@ export default {
 	}
 };
 </script>
-<style></style>
+<style>
+.modal-body h5, p{
+	user-select: none;
+}
+</style>
