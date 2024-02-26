@@ -69,7 +69,7 @@ export default {
             // console.log(hours, minutes, seconds, ms)
             if (ms >= 500 && seconds<59) seconds += 1;
 
-            if (this.periodType !== 10) {
+            if (this.periodType !== this.$root.PERIOD_TYPES.daily) {
                 return `${days}天 ${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
             } else {
                 return `${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;

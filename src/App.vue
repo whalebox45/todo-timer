@@ -4,14 +4,17 @@
   <div>
     <div style="height:2.5rem"></div>
     <div class="mx-4 maincontrol d-flex justify-content-between">
-      <div class="control-left">
+      <div class="control-left"  @click="toggleSortByPeriodType">
         <a class="bi bi-sort-down" id="sortbtn"></a>
+        <p class="m-0 p-0" v-if="sortByPeriodType">種類</p>
+        <p class="m-0 p-0" v-else>創建時間</p>
       </div>
       <div class="ms-auto"></div>
     </div>
 
     <div class="row gy-3 gx-4 mx-4">
-      <TaskCard v-bind:ref="'taskCard_' + t.id" v-for="t in timerDataArray" v-bind:key="t.id" :id="t.id" :taskTitle="t.taskTitle" :isChecked="t.isChecked"
+      <TaskCard v-bind:ref="'taskCard_' + t.id" v-for="t in sortedTimerDataArray"  
+        v-bind:key="t.id" :id="t.id" :taskTitle="t.taskTitle" :isChecked="t.isChecked"
         :setTodoTime="t.setTodoTime" :isTimer="t.isTimer" :periodType="t.periodType"
         @edit-task="openEditModal" @checkbox-change="handleCheckboxChange" @delete-task="deleteTimerById" />
     </div>
@@ -51,6 +54,7 @@
 $navcolor: #111111;
 $navcolor2: #1a1a1a;
 
+$auxcolor: #888888;
 $navfg: orange;
 
 .maincontrol {
@@ -58,8 +62,12 @@ $navfg: orange;
     font-size: 36px;
   }
 
-  a {
-    color: #888888;
+  * {
+    color: $auxcolor;
+  }
+
+  .control-left{
+    display: flex;
   }
 }
 

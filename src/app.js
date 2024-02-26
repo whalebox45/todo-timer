@@ -1,4 +1,4 @@
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, ref } from 'vue';
 import { Modal, Offcanvas } from 'bootstrap';
 import dayjs from 'dayjs';
 
@@ -25,6 +25,7 @@ class Timer {
     this.setTodoTime = setTodoTime;
     this.periodType = periodType;
     this.lastCheckAt = {};
+    this.createdAt = dayjs();
   }
   static createTask(taskTitle, setTodoTime, isTimer, isChecked, periodType) {
     return new Timer(taskTitle, setTodoTime, isTimer, isChecked, periodType);
@@ -37,8 +38,11 @@ export default {
     const timerDataArray = reactive([]);
     const editTaskData = reactive({});
 
+    const sortByPeriodType = ref(false);
+
     // Load data from localStorage if it exists
     const storedData = localStorage.getItem('TimerDataArrayStorage');
+    
 
     const resetDefaultTask = function () {
       localStorage.removeItem('TimerDataArrayStorage');
@@ -68,7 +72,24 @@ export default {
     }
 
     // debugger;
-    return { timerDataArray, Timer, editTaskData, PERIOD_TYPES };
+    return { timerDataArray, Timer, editTaskData, PERIOD_TYPES, sortByPeriodType };
+  },
+  computed:{
+    sortedTimerDataArray() {
+      if (this.sortByPeriodType) {
+       // Prioritize tasks where isTimer is false
+       const nonTimerTasks = this.timerDataArray.filter(task => !task.isTimer);
+       const timerTasks = this.timerDataArray.filter(task => task.isTimer);
+
+       // Sort nonTimerTasks first, then sort the timerTasks by periodType
+       const sortedNonTimerTasks = nonTimerTasks.sort((a, b) => a.periodType - b.periodType);
+       const sortedTimerTasks = timerTasks.sort((a, b) => a.periodType - b.periodType);
+
+       return [...sortedNonTimerTasks, ...sortedTimerTasks];
+      } else {
+        return this.timerDataArray.slice().sort((a, b) => a.createdAt - b.createdAt);
+      }
+    }
   },
   mounted() {
   },
@@ -83,6 +104,9 @@ export default {
     };
   },
   methods: {
+    toggleSortByPeriodType(){
+      this.sortByPeriodType = !this.sortByPeriodType;
+    },
     toggleDrawerOffcanvas() {
       const DrawerOffcanvas = document.getElementById('menuOffcanvas');
       const offcanvas = Offcanvas.getOrCreateInstance(DrawerOffcanvas);

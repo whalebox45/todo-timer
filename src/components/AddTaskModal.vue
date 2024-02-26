@@ -145,7 +145,7 @@ export default {
 			selectedHour: 0,
 			selectedMinute: 0,
 			isPM: 1,
-			periodType: this.$root.PERIOD_TYPES.once,
+			periodType: this.$root.PERIOD_TYPES.daily,
 			minutes: Array.from({ length: 60 }, (_, index) => index.toString())
 		}
 	},
