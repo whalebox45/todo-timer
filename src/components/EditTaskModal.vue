@@ -3,7 +3,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">編輯項目</h5>
+					<h5 class="modal-title" :title="formattedData">編輯項目</h5>
 					<button type="button" class="btn-close" aria-label="Close" @click="closeModal"></button>
 				</div>
 				<div class="modal-body">
@@ -11,21 +11,22 @@
 						<div class="form-group container-fluid row">
 							<h5 :title="id" class="col-3">標題</h5>
 							<span class="col-9">
-								<input type="text" class="form-control" maxlength="100" v-model="taskTitle" />
+								<input type="text" class="form-control" maxlength="100" v-model="taskTitle" 
+									@submit.prevent="onSubmit" />
 							</span>
 						</div>
 
 						<div class="form-group container-fluid row">
 							<h5 class="col-3">定時</h5>
 							<span class="col-3">
-								<input class="form-check-input" type="radio" id="periodRadio1" name="periodRadio"
+								<input class="form-check-input" type="radio" id="isTimerRadio1" name="isTimerRadio"
 									v-model="isTimer" value="0">
-								<label class="form-check-label" for="periodRadio1">否</label>
+								<label class="form-check-label" for="isTimerRadio1">否</label>
 							</span>
 							<span class="col-3">
-								<input class="form-check-input" type="radio" id="periodRadio2" name="periodRadio"
+								<input class="form-check-input" type="radio" id="isTimerRadio2" name="isTimerRadio"
 									v-model="isTimer" value="1">
-								<label class="form-check-label" for="periodRadio2">每日重複</label>
+								<label class="form-check-label" for="isTimerRadio2">每日重複</label>
 							</span>
 						</div>
 
@@ -38,7 +39,7 @@
 							<div class="row">
 								<h5 class="col-3">日期</h5>
 								<span class="col-4">
-									<input type="date" v-model="selectedDate" id="">
+									<input type="date" v-model="selectedDate">
 								</span>
 								<span class="col-4">
 
@@ -81,6 +82,34 @@
 									</select>
 								</div>
 
+								
+
+							</div>
+
+							<div class="row">
+								<p class="col-2">重複性</p>
+
+								<span class="col">
+									<input class="form-check-input" type="radio" id="periodRadio0" name="test" value="0"
+										v-model="periodType">
+									<label class="form-check-label" for="periodRadio0">不重複</label>
+								</span>
+								<span class="col">
+									<input class="form-check-input" type="radio" id="periodRadio1" name="test" value="10"
+										 v-model="periodType">
+									<label class="form-check-label" for="periodRadio1">每日</label>
+								</span>
+								<span class="col">
+									<input class="form-check-input" type="radio" id="periodRadio2" name="test" value="20"
+										v-model="periodType">
+									<label class="form-check-label" for="periodRadio2">每週</label>
+								</span>
+								<span class="col">
+									<input class="form-check-input" type="radio" id="periodRadio3" name="test" value="30"
+										v-model="periodType">
+									<label class="form-check-label" for="periodRadio3">每月</label>
+								</span>
+
 							</div>
 						</div>
 					</form>
@@ -104,13 +133,13 @@
 <script>
 import { Modal } from 'bootstrap';
 import dayjs from 'dayjs';
-
 export default {
 	data() {
 		return {
 			selectedDate: dayjs().format('YYYY-MM-DD'),
 			taskTitle: '',
 			isTimer: 0,
+			periodType: 0,
 			selectedHour: 0,
 			selectedMinute: 0,
 			isPM: 1,
@@ -125,6 +154,8 @@ export default {
 				this.selectedDate = dayjs().format('YYYY-MM-DD');
 			}
 		},
+		selectedHour(newVal){ if(!newVal){this.selectedHour = 0;} },
+		selectedMinute(newVal){ if(!newVal){this.selectedMinute = 0;} },
 		editTaskData: {
 			immediate: true, // Log the initial value
 			handler(newVal) {
@@ -133,6 +164,7 @@ export default {
 					this.id = newVal.id;
 					this.taskTitle = newVal.taskTitle;
 					this.isTimer = newVal.isTimer ? 1 : 0;
+					this.periodType = newVal.periodType;
 					if (newVal.isTimer) {
 						// console.log(newVal.setTodoTime);
 
@@ -173,6 +205,12 @@ export default {
 			this.$emit('modal-hidden');
 		});
 	},
+	computed:{
+		formattedData() {
+			// Format your data here
+			return `Task ID: ${this.id}\n Task Title: ${this.taskTitle}\n Is Timer: ${this.isTimer}\n Selected Date: ${this.selectedDate} ${this.selectedHour}:${this.selectedMinute} ${this.isPM ? 'PM':'AM'}\n Period Type: ${this.periodType}`;
+		}
+	},
 	methods: {
 		closeModal() {
 			let AddTaskModal = document.getElementById('EditTaskModal');
@@ -182,22 +220,27 @@ export default {
 		saveClick() {
 			// console.log(this.selectedDate, this.selectedHour, this.selectedMinute);
 			// let timeInSeconds = this.selectedHour * 3600 + this.selectedMinute * 60;
+			
+			const setHour = parseInt(this.selectedHour);
+			const setMinute = parseInt(this.selectedMinute);
 			const isPM = parseInt(this.isPM)
 
 			// if (isPM === 1) timeInSeconds += 12 * 3600;
 
 			const isTimer = parseInt(this.isTimer);
 
-			let setHour = (isPM === 1) ? this.selectedHour + 12 : this.selectedHour;
-			let setMinute = this.selectedMinute;
-			let setDate = this.selectedDate;
-
+			let setPeriodType = parseInt(this.periodType)
 
 			let todoTime;
-			if (isTimer === 1) {
-				todoTime = dayjs(setDate).hour(setHour).minute(setMinute).second(0).millisecond(0);
+			if (isTimer == 1) {
+				todoTime = dayjs(this.selectedDate)
+					.hour(isPM === 1 && setHour !== 12 ? setHour + 12 : setHour)
+					.minute(setMinute)
+					.second(0)
+					.millisecond(0);
 			} else {
 				todoTime = dayjs().second(0).millisecond(0);
+				setPeriodType = this.$root.PERIOD_TYPES.once;
 			}
 
 			// console.log(todoTime)
@@ -206,6 +249,7 @@ export default {
 				taskTitle: this.taskTitle,
 				setTodoTime: todoTime,
 				isTimer: isTimer === 1,
+				periodType: setPeriodType
 			});
 
 			// Save the updated timerDataArray to localStorage

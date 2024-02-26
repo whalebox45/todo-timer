@@ -11,7 +11,8 @@
 						<div class="form-group container-fluid row">
 							<h5 class="col-3">標題</h5>
 							<span class="col-9">
-								<input type="text" class="form-control" maxlength="100" v-model="taskTitle" />
+								<input type="text" class="form-control" maxlength="100" v-model="taskTitle"
+									@submit.prevent="onSubmit" />
 							</span>
 						</div>
 
@@ -90,33 +91,29 @@
 							</div>
 
 							<div class="row">
-								<h5 class="col-3">重複性</h5>
-								<div class="col-9">
-									<div class="row">
-										<span class="col">
-											<input class="form-check-input" type="radio" id="periodRadio0" name="test"
-												value="0" disabled>
-											<label class="form-check-label" for="periodRadio0">不重複</label>
-										</span>
-										<span class="col">
-											<input class="form-check-input" type="radio" id="periodRadio1" name="test"
-												value="1" disabled>
-											<label class="form-check-label" for="periodRadio1">每日</label>
-										</span>
-									</div>
-									<div class="row">
-										<span class="col">
-											<input class="form-check-input" type="radio" id="periodRadio2" name="test"
-												value="0" disabled>
-											<label class="form-check-label" for="periodRadio2">每週</label>
-										</span>
-										<span class="col">
-											<input class="form-check-input" type="radio" id="periodRadio3" name="test"
-												value="1" disabled>
-											<label class="form-check-label" for="periodRadio3">每月</label>
-										</span>
-									</div>
-								</div>
+								<p class="col-2">重複性</p>
+
+								<span class="col">
+									<input class="form-check-input" type="radio" id="periodRadio0" name="test" value="0"
+										v-model="periodType">
+									<label class="form-check-label" for="periodRadio0">不重複</label>
+								</span>
+								<span class="col">
+									<input class="form-check-input" type="radio" id="periodRadio1" name="test" value="10"
+										checked v-model="periodType">
+									<label class="form-check-label" for="periodRadio1">每日</label>
+								</span>
+								<span class="col">
+									<input class="form-check-input" type="radio" id="periodRadio2" name="test" value="20"
+										v-model="periodType">
+									<label class="form-check-label" for="periodRadio2">每週</label>
+								</span>
+								<span class="col">
+									<input class="form-check-input" type="radio" id="periodRadio3" name="test" value="30"
+										v-model="periodType">
+									<label class="form-check-label" for="periodRadio3">每月</label>
+								</span>
+
 							</div>
 						</div>
 					</form>
@@ -148,6 +145,7 @@ export default {
 			selectedHour: 0,
 			selectedMinute: 0,
 			isPM: 1,
+			periodType: this.$root.PERIOD_TYPES.once,
 			minutes: Array.from({ length: 60 }, (_, index) => index.toString())
 		}
 	},
@@ -162,6 +160,15 @@ export default {
 				modal.hide();
 			}
 		},
+		selectedDate(newDate, oldDate) {
+			// Check if the newDate is empty or null
+			if (!newDate) {
+				// Set the selectedDate to today's date
+				this.selectedDate = dayjs().format('YYYY-MM-DD');
+			}
+		},
+		selectedHour(newVal) { if (!newVal) { this.selectedHour = 0; } },
+		selectedMinute(newVal) { if (!newVal) { this.selectedMinute = 0; } }
 	},
 	mounted() {
 
@@ -180,33 +187,36 @@ export default {
 			modal.hide()
 		},
 		addClick() {
-			let timeInSeconds = this.selectedHour * 3600 + this.selectedMinute * 60;
-			const isPM = parseInt(this.isPM)
-
-			if (isPM === 1) timeInSeconds += 12 * 3600;
-
-			const isTimer = parseInt(this.isTimer) === 1;
+			// Convert selectedHour and selectedMinute to integers
+			const setHour = parseInt(this.selectedHour);
+			const setMinute = parseInt(this.selectedMinute);
+			const isPM = parseInt(this.isPM);
 
 
+			let setPeriodType = parseInt(this.periodType)
 
-			let setHour = (isPM === 1) ? this.selectedHour + 12 : this.selectedHour;
-			let setMinute = this.selectedMinute;
-			let setDate = this.selectedDate;
 
+			// Create the todo time using dayjs
 			let setTodoTime;
-			if (isTimer) {
-				setTodoTime = dayjs(setDate).hour(setHour).minute(setMinute).second(0).millisecond(0);
+			if (this.isTimer) {
+				setTodoTime = dayjs(this.selectedDate)
+					.hour(isPM === 1 && setHour !== 12 ? setHour + 12 : setHour)
+					.minute(setMinute)
+					.second(0)
+					.millisecond(0);
 			} else {
 				setTodoTime = dayjs().second(0).millisecond(0);
+				setPeriodType = this.$root.PERIOD_TYPES.once;
 			}
-
 
 			// Create a new instance of the Timer class using the static method
 			const newTimer = App.setup().Timer.createTask(
-				this.taskTitle, setTodoTime, isTimer, false, App.setup().PERIOD_TYPES.daily);
-
-			// console.log(newTimer);
-
+				this.taskTitle,
+				setTodoTime,
+				this.isTimer == 1,
+				false,
+				setPeriodType
+			);
 
 			// Access the timerDataArray from the root Vue instance
 			this.$root.timerDataArray.push(newTimer);
@@ -214,7 +224,7 @@ export default {
 			// Save the updated timerDataArray to localStorage
 			localStorage.setItem('TimerDataArrayStorage', JSON.stringify(this.$root.timerDataArray));
 
-			// Cose the modal
+			// Close the modal
 			this.closeModal();
 		}
 	}

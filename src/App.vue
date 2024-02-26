@@ -12,8 +12,8 @@
 
     <div class="row gy-3 gx-4 mx-4">
       <TaskCard v-bind:ref="'taskCard_' + t.id" v-for="t in timerDataArray" v-bind:key="t.id" :id="t.id" :taskTitle="t.taskTitle" :isChecked="t.isChecked"
-        :setTodoTime="t.setTodoTime" :isTimer="t.isTimer" @edit-task="openEditModal"
-        @checkbox-change="handleCheckboxChange" @delete-task="deleteTimerById"/>
+        :setTodoTime="t.setTodoTime" :isTimer="t.isTimer" :periodType="t.periodType"
+        @edit-task="openEditModal" @checkbox-change="handleCheckboxChange" @delete-task="deleteTimerById" />
     </div>
 
 
