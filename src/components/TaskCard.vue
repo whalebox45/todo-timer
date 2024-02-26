@@ -209,6 +209,7 @@ $frontcolor: darkorange;
     color: $frontcolor;
 
     * {
+        user-select: none;
         margin: 0 0 0 0;
         line-height: 1em;
     }
