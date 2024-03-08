@@ -67,7 +67,7 @@ export default {
 
             const ms = duration.milliseconds();
             // console.log(hours, minutes, seconds, ms)
-            if (ms >= 500 && seconds<59) seconds += 1;
+            if (ms >= 500 && seconds < 59) seconds += 1;
 
             if (this.periodType !== this.$root.PERIOD_TYPES.daily) {
                 return `${days}天 ${this.pad(hours)}:${this.pad(minutes)}:${this.pad(seconds)}`;
@@ -91,7 +91,7 @@ export default {
 
                 const todayHHMMSS = dayjs().hour(dt.hour()).minute(dt.minute()).second(dt.second()).millisecond(dt.millisecond());
                 const thisWeekdayHHMMSS = dayjs().weekday(dt.weekday()).hour(dt.hour()).minute(dt.minute()).second(dt.second()).millisecond(dt.millisecond());
-                
+
                 const daysInMonth = dt.daysInMonth();
                 const dayOfMonth = Math.min(dt.date(), daysInMonth);
                 const thisMonthDayHHMMSS = dayjs().date(dayOfMonth).hour(dt.hour()).minute(dt.minute()).second(dt.second()).millisecond(dt.millisecond());
@@ -120,7 +120,7 @@ export default {
                     }
                 } else {
                     if (dt.isAfter(now)) {
-                        this.elapsedTime = dt.diff(now, "millisecond", true)    
+                        this.elapsedTime = dt.diff(now, "millisecond", true)
                     } else {
                         this.elapsedTime = 0;
                     }
@@ -179,6 +179,7 @@ export default {
     },
 }
 </script>
+
 <style scoped lang="scss">
 $cardcolor: #333333;
 $auxcolor: #888888;
@@ -189,10 +190,70 @@ $frontcolor: darkorange;
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 0 0 0 15px;
+    padding: 0 0 0 10px;
     background-color: $cardcolor;
-    filter: drop-shadow(6px 6px 0px #00000088)
+    filter: drop-shadow(6px 6px 0px #00000088);
+
+
+
+    /* Media query for screens less than 768px */
+    @media screen and (max-width: 767px) {
+        height: 80px;
+        /* Adjust height for smaller screens */
+        padding: 0 0 0 10px;
+        /* Adjust padding for smaller screens */
+
+        .taskcheck {
+            * {
+                height: 48px;
+                /* Adjust element heights for smaller screens */
+                width: 48px;
+                /* Adjust element heights for smaller screens */
+            }
+
+            p {
+                font-size: 48px;
+                /* Adjust font size for smaller screens */
+            }
+        }
+
+        .tasktexts {
+            h1 {
+                font-size: 40px;
+                /* Adjust font size for smaller screens */
+            }
+
+            h2 {
+                font-size: 28px;
+                /* Adjust font size for smaller screens */
+            }
+        }
+
+        .taskcontrol {
+            a {
+                font-size: 28px;
+                /* Adjust font size for smaller screens */
+            }
+
+            .tasktypeicon p {
+                font-size: 14px;
+                /* Adjust font size for smaller screens */
+            }
+        }
+
+        /* Nested media query for even smaller screens */
+        @media screen and (max-width: 383px) {
+            .tasktexts {
+                h2 {
+                    font-size: 20px;
+                    /* Adjust font size for even smaller screens */
+                }
+            }
+        }
+    }
+
 }
+
 
 .taskcheck {
     display: grid;
@@ -241,7 +302,7 @@ $frontcolor: darkorange;
 }
 
 .taskcontrol {
-    height: 100%;
+    // height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -254,7 +315,7 @@ $frontcolor: darkorange;
     }
 
     .tasktypeicon p {
-        margin: 0 10px 0 0;
+        margin: 0 10% 10% 0;
         font-size: 18px;
         color: $auxcolor;
     }
